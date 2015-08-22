@@ -1,0 +1,25 @@
+{
+    "name": "gskema/prestashop-installer",
+    "description": "PrestaShop application installer.",
+    "keywords": ["prestashop"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gytis Škėma",
+            "email": "gytis.skema@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PrestaShop\\Installer\\Console\\": "src/"
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "~4.0|~5.0",
+        "symfony/console": "~2.3",
+        "symfony/filesystem": "^2.7"
+    },
+    "bin": [
+        "prestashop"
+    ]
+}
