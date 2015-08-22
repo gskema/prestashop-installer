@@ -6,16 +6,19 @@ Inspired by [laravel/installer](https://github.com/laravel/installer).
 
 ## Usage
 
-To install PrestaShop, run this command:
+To install this tool on your system, run:
 
 ```
-./prestashop new my-shop
+composer global require "gskema/prestashop-installer=~1.0"
 ```
 
-or
+Make sure to place the ~/.composer/vendor/bin directory in your PATH
+so the `prestashop` executable can be located by your system.
+
+Once installed, you may create new prestashop installation with this command:
 
 ```
-php prestashop new my-shop
+prestashop new my-shop
 ```
 
 ## Options
