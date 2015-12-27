@@ -19,6 +19,9 @@ class NewCommand extends Command
     /** @var \GuzzleHttp\Client */
     protected $client = null;
 
+    /**
+     * NewCommand constructor.
+     */
     public function __construct()
     {
         $this->filesystem = new Filesystem();
@@ -34,8 +37,7 @@ class NewCommand extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('new')
+        $this->setName('new')
             ->setDescription('Create a new PrestaShop application.')
             ->addArgument('folder', InputArgument::REQUIRED)
             ->addArgument('version', InputArgument::OPTIONAL);
