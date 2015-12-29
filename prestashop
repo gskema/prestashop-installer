@@ -8,6 +8,6 @@ if (file_exists(__DIR__.'/../../autoload.php')) {
 }
 
 $app = new Symfony\Component\Console\Application('PrestaShop Installer', '1.0.0');
-$app->add(new PrestaShop\Installer\Console\NewCommand());
+$app->add(new Gskema\PrestaShop\Installer\Console\NewCommand());
 
 $app->run();

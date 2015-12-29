@@ -1,6 +1,6 @@
 <?php
 
-namespace PrestaShop\Installer\Console;
+namespace Gskema\PrestaShop\Installer\Console;
 
 use ZipArchive;
 use RuntimeException;
