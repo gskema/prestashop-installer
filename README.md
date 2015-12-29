@@ -23,10 +23,10 @@ prestashop new my-shop
 
 ## Options
 
-A specific version may be provided as an optional second argument:
+A specific **release** version to be downloader may be specified via argument:
 
 ```
-new <folder> [<version>]
+prestashop new <folder> --release=1.6.0.9
 ```
 
-If *version* is not provided, the latest PrestaShop version will be downloaded.
+If **release** version is not provided, the latest PrestaShop will be downloaded.
