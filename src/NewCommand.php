@@ -7,10 +7,15 @@ use RuntimeException;
 use GuzzleHttp\Client;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class NewCommand
+ * @package PrestaShop\Installer\Console
+ */
 class NewCommand extends Command
 {
     /** @var \Symfony\Component\Filesystem\Filesystem */
@@ -40,7 +45,13 @@ class NewCommand extends Command
         $this->setName('new')
             ->setDescription('Create a new PrestaShop application.')
             ->addArgument('folder', InputArgument::REQUIRED)
-            ->addArgument('version', InputArgument::OPTIONAL);
+            ->addArgument('version', InputArgument::OPTIONAL)
+            ->addOption(
+                'fixture',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Replaces demo product, category, banner pictures. Available values: [\'starwars\', \'got\', \'tech\']'
+            );
     }
 
     /**
@@ -70,13 +81,36 @@ class NewCommand extends Command
 
         $output->writeln('<info>Extracting files to ./'.$folder.'/...</info>');
 
-        $this->extract($zipFile, $tmpFolder)
-             ->moveFiles($tmpFolder, $directory)
-             ->cleanUp($zipFile, $tmpFolder);
+        $this->extract($zipFile, $tmpFolder);
+        $this->moveFiles($tmpFolder, $directory);
+
+        $fixture = $this->getFixtureOption($input);
+        if ($fixture) {
+            $this->setFixture($fixture, $directory);
+        }
+
+        $this->cleanUp($zipFile, $tmpFolder);
 
         $output->writeln('<comment>PrestaShop is ready to be installed!</comment>');
         $output->writeln('<comment>To proceed with the installation, open the website in your browser or '
             .'run CLI installer script: php ./'.$folder.'/install/index_cli.php</comment>');
+    }
+
+    /**
+     * Returns fixture option
+     *
+     * @param InputInterface $input
+     * @return string
+     */
+    protected function getFixtureOption(InputInterface $input)
+    {
+        $fixture = strtolower(trim($input->getOption('fixture')));
+
+        if (in_array($fixture, array('starwars', 'got', 'tech'))) {
+            return $fixture;
+        }
+
+        return '';
     }
 
     /**
@@ -185,6 +219,24 @@ class NewCommand extends Command
         $archive->open($zipFile);
         $archive->extractTo($directory);
         $archive->close();
+
+        return $this;
+    }
+
+    /**
+     * Copies fixture picture to PrestaShop installation
+     *
+     * @param string $fixture
+     * @param string $directory
+     * @return $this
+     */
+    protected function setFixture($fixture, $directory, $output)
+    {
+        $fixtureDir = __DIR__.'/fixtures/'.$fixture;
+
+        if (is_dir($fixtureDir)) {
+            $this->filesystem->mirror($fixtureDir, $directory, null, array('override' => true));
+        }
 
         return $this;
     }
