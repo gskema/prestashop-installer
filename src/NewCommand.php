@@ -123,7 +123,7 @@ class NewCommand extends Command
     {
         // If a specific version is requested, download it
         if (!empty($version)) {
-            return sprintf('http://www.prestashop.com/download/releases/%s.zip', $version);
+            return sprintf('http://www.prestashop.com/download/releases/prestashop_%s.zip', $version);
         }
 
         // Else, get the latest version
