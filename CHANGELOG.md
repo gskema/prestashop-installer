@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2 (2015-12-29)
+- Updated documentation
+
 ## 2.0.1 (2015-12-29)
 - Moved fixture files to the same folder as NewCommand class
 
