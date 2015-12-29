@@ -45,7 +45,12 @@ class NewCommand extends Command
         $this->setName('new')
             ->setDescription('Create a new PrestaShop application.')
             ->addArgument('folder', InputArgument::REQUIRED)
-            ->addArgument('version', InputArgument::OPTIONAL)
+            ->addOption(
+                'release',
+                'r',
+                InputOption::VALUE_REQUIRED,
+                'Specify PrestaShop release version to download. E.g. 1.6.1.3'
+            )
             ->addOption(
                 'fixture',
                 null,
@@ -70,7 +75,7 @@ class NewCommand extends Command
 
         $output->writeln('<info>Creating PrestaShop application...</info>');
 
-        $downloadUrl = $this->getDownloadUrl($input->getArgument('version'));
+        $downloadUrl = $this->getDownloadUrl($input->getOption('release'));
 
         $output->writeln('<info>Downloading from URL: '.$downloadUrl.'</info>');
 
