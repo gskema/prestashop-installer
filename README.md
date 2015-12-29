@@ -1,5 +1,8 @@
 # PrestaShop Installer
 
+[![Packagist](https://img.shields.io/packagist/dt/gskema/prestashop-installer.svg)]()
+[![GitHub release](https://img.shields.io/github/release/gskema/prestashop-installer.svg)]()
+
 A CLI tool which downloads and extracts PrestaShop to a specified directory.
 Can install alternative demo images.
 
