@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class NewCommand
@@ -44,7 +45,7 @@ class NewCommand extends Command
     {
         $this->setName('new')
             ->setDescription('Create a new PrestaShop application.')
-            ->addArgument('folder', InputArgument::REQUIRED)
+            ->addArgument('folder', InputArgument::OPTIONAL)
             ->addOption(
                 'release',
                 'r',
@@ -69,9 +70,16 @@ class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $folder = $input->getArgument('folder');
-        $this->verifyApplicationDoesNotExist(
-            $directory = getcwd().'/'.$folder
-        );
+        $directory = getcwd().'/'.$folder;
+
+        $isFolderEmpty = $this->verifyApplicationDoesNotExist($directory);
+        if (!$isFolderEmpty) {
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion('Directory '.$directory.' is not empty. Would you like to install anyway [y/n]?', false);
+            if (!$helper->ask($input, $output, $question)) {
+                return;
+            }
+        }
 
         $output->writeln('<info>Creating PrestaShop application...</info>');
 
@@ -122,13 +130,17 @@ class NewCommand extends Command
      * Verify that the application does not already exist.
      *
      * @param  string  $directory
-     * @return void
+     * @return bool
      */
     protected function verifyApplicationDoesNotExist($directory)
     {
-        if ($this->filesystem->exists($directory)) {
-            throw new RuntimeException('Application already exists!');
+        if (!$this->filesystem->exists($directory)) {
+            return true;
+        } elseif (count(scandir($directory)) > 2) {
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -255,7 +267,7 @@ class NewCommand extends Command
      */
     protected function moveFiles($tmpDirectory, $directory)
     {
-        $this->filesystem->rename($tmpDirectory.'/prestashop', $directory);
+        $this->filesystem->mirror($tmpDirectory.'/prestashop', $directory, null, array('override' => true));
 
         return $this;
     }
