@@ -1,3 +1,6 @@
+# 2.0.1 (2015-12-29)
+- Moved fixture files to the same folder as NewCommand class
+
 # 2.0.0 (2015-12-29)
 - Added ability to install to current folder
 - Version argument changed to `release` option
