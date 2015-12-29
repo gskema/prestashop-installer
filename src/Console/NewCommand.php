@@ -230,7 +230,7 @@ class NewCommand extends Command
      * @param string $directory
      * @return $this
      */
-    protected function setFixture($fixture, $directory, $output)
+    protected function setFixture($fixture, $directory)
     {
         $fixtureDir = __DIR__.'/fixtures/'.$fixture;
 
