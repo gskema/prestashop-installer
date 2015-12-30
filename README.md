@@ -40,3 +40,14 @@ Examples:
                                                        // and replaces demo data images
                                                        // with Game of Thrones images
 ```
+
+## Fixture screenshots
+
+### Star Wars
+![Fixture - Star Wars](http://i.imgur.com/lCw0nQh.png "Demo data fixture: Star Wars")
+
+### Game of Thrones
+![Fixture - Game of Thrones](http://i.imgur.com/GuPah7n.png "Demo data fixture: Game of Thrones")
+
+### Tech - Electronics
+![Fixture - Tech](http://i.imgur.com/kykWw06.png "Demo data fixture: Technology, Electronics")
