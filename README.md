@@ -20,6 +20,12 @@ composer global require "gskema/prestashop-installer=~2.0"
 Make sure to place the `~/.composer/vendor/bin` directory in your PATH
 so the `prestashop` executable can be located by your system.
 
+**Warning!**
+
+Installing multiple global composer tools may cause dependency conflicts.
+You may need to install global tools separately and use `bin-dir`
+**composer.json** option.
+
 Once installed, you may create new prestashop installation with this command:
 
 ```
