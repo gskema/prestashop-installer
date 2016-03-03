@@ -25,17 +25,23 @@ class NewCommand extends Command
     /** @var \GuzzleHttp\Client */
     protected $client = null;
 
+    /** @var string */
+    protected $wd = null;
+
     /**
      * NewCommand constructor.
      *
-     * @param Client     $client
-     * @param Filesystem $fs
-     *
+     * @param Client|null     $client
+     * @param Filesystem|null $fs
+     * @param string|null     $wd
      */
-    public function __construct(Client $client = null, Filesystem $fs = null)
+    public function __construct(Client $client = null, Filesystem $fs = null, $wd = null)
     {
         $this->client     = $client === null ? new Client()     : $client;
         $this->filesystem = $fs     === null ? new Filesystem() : $fs;
+        $this->wd         = $wd     === null ? getcwd()         : $wd;
+
+        $this->wd = rtrim($this->wd, '/');
 
         parent::__construct();
     }
@@ -74,7 +80,7 @@ class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $folder = $input->getArgument('folder');
-        $directory = getcwd().'/'.$folder;
+        $directory = $this->wd.'/'.$folder;
 
         $isFolderEmpty = $this->verifyApplicationDoesNotExist($directory);
         if (!$isFolderEmpty) {
@@ -154,7 +160,7 @@ class NewCommand extends Command
      */
     protected function makeFilename()
     {
-        return getcwd().'/prestashop_'.md5(time().uniqid()).'.zip';
+        return $this->wd.'/prestashop_'.md5(time().uniqid()).'.zip';
     }
 
     /**
@@ -164,7 +170,7 @@ class NewCommand extends Command
      */
     protected function makeFolderName()
     {
-        return getcwd().'/prestashop_'.md5(time().uniqid());
+        return $this->wd.'/prestashop_'.md5(time().uniqid());
     }
 
     /**
