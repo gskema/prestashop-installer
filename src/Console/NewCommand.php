@@ -85,7 +85,10 @@ class NewCommand extends Command
         $isFolderEmpty = $this->verifyApplicationDoesNotExist($directory);
         if (!$isFolderEmpty) {
             $helper = $this->getHelper('question');
-            $question = new ConfirmationQuestion('Directory '.$directory.' is not empty. Would you like to install anyway [y/n]?', false);
+            $question = new ConfirmationQuestion(
+                'Directory '.$directory.' is not empty. Would you like to install anyway [y/n]?',
+                false
+            );
             if (!$helper->ask($input, $output, $question)) {
                 return;
             }
