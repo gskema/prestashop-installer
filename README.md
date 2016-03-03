@@ -1,5 +1,6 @@
 # PrestaShop Installer
 
+[![Build Status](https://travis-ci.org/gskema/prestashop-installer.svg?branch=dev)](https://travis-ci.org/gskema/prestashop-installer)
 [![Join the chat at https://gitter.im/gskema/prestashop-installer](https://badges.gitter.im/gskema/prestashop-installer.svg)](https://gitter.im/gskema/prestashop-installer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Packagist](https://img.shields.io/packagist/dt/gskema/prestashop-installer.svg)]()
 [![GitHub release](https://img.shields.io/github/release/gskema/prestashop-installer.svg)]()
