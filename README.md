@@ -25,7 +25,7 @@ so the `prestashop` executable can be located by your system.
 
 Installing multiple global composer tools may cause dependency conflicts.
 You may need to install global tools separately and use `bin-dir`
-**composer.json** option.
+**composer.json** option (if you wish to avoid dependency conflicts).
 
 Once installed, you may create new prestashop installation with this command:
 
