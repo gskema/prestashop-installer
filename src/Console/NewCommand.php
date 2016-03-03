@@ -27,11 +27,14 @@ class NewCommand extends Command
 
     /**
      * NewCommand constructor.
+     *
+     * @param Filesystem $fs
+     * @param Client     $client
      */
-    public function __construct()
+    public function __construct(Filesystem $fs = null, Client $client = null)
     {
-        $this->filesystem = new Filesystem();
-        $this->client = new Client();
+        $this->filesystem = $fs     === null ? new Filesystem() : $fs;
+        $this->client     = $client === null ? new Client()     : $client;
 
         parent::__construct();
     }
