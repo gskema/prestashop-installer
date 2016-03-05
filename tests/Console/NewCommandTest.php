@@ -15,15 +15,10 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
     /** @var Filesystem */
     public $fs;
 
-    /** @var string */
-    public $wd;
-
     public function setUp()
     {
         $this->fs = new Filesystem();
         $this->fs->mkdir(TESTING_DIR);
-
-        $this->wd = TESTING_DIR;
     }
 
     public function tearDown()
@@ -86,14 +81,18 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
      * Tests if command correctly resolves directory, downloads and extracts
      * PrestaShop 1.6
      *
-     * @dataProvider providerFolderArgument
-     *
      * @param string $wd
      * @param string $folderArgument
      * @param string $expectedOutputDirectory
+     *
+     * @dataProvider providerFolderArgument
      */
     public function testItDownloadsAndExtractsPS16ToFolder($wd, $folderArgument, $expectedOutputDirectory)
     {
+        // If you call command from console, you already are in some working directory (wd, cwd)
+        // We need to create it when we test
+        $this->fs->mkdir($wd);
+
         $client = $this->getMockClient([
             'https://api.prestashop.com/xml/channel.xml'
                 => TESTS_DIR.'/assets/xml/channel.xml',
@@ -148,24 +147,25 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
      */
     public function providerFolderArgument()
     {
+        $wd = TESTING_DIR;
+
         return [
-            [$this->wd, '',   $this->wd],
-            [$this->wd, '.',  $this->wd],
-            [$this->wd, './', $this->wd],
+            [$wd, '',   $wd],
+            [$wd, '.',  $wd],
+            [$wd, './', $wd],
 
-            [$this->wd, 'ps1',   $this->wd.'/ps1'],
-            [$this->wd, './ps1', $this->wd.'/ps1'],
+            [$wd, 'ps1',   $wd.'/ps1'],
+            [$wd, './ps1', $wd.'/ps1'],
 
-            [$this->wd, 'up1/ps2',   $this->wd.'/up1/ps2'],
-            [$this->wd, './up1/ps2', $this->wd.'/up1/ps2'],
+            [$wd, 'up1/ps2',   $wd.'/up1/ps2'],
+            [$wd, './up1/ps2', $wd.'/up1/ps2'],
 
-            [$this->wd.'/up1/up2/up3', '.',            $this->wd.'/up1/up2/up3'],
-            [$this->wd.'/up1/up2/up3', './',           $this->wd.'/up1/up2/up3'],
-            [$this->wd.'/up1/up2/up3', '../',          $this->wd.'/up1/up2'],
-            [$this->wd.'/up1/up2/up3', '../../',       $this->wd.'/up1/'],
-            [$this->wd.'/up1/up2/up3', '../ps3',       $this->wd.'/up1/up2/ps3'],
-            [$this->wd.'/up1/up2/up3', '../../ps2',    $this->wd.'/up1/ps2'],
-            [$this->wd.'/up1/up2/up3', '../../../ps1', $this->wd.'/ps1'],
+            [$wd.'/up1/up2/up3', '',   $wd.'/up1/up2/up3'],
+            [$wd.'/up1/up2/up3', '.',  $wd.'/up1/up2/up3'],
+            [$wd.'/up1/up2/up3', './', $wd.'/up1/up2/up3'],
+
+            [$wd.'/up1/up2/up3', 'ps4',   $wd.'/up1/up2/up3/ps4'],
+            [$wd.'/up1/up2/up3', './ps4', $wd.'/up1/up2/up3/ps4'],
         ];
     }
 
