@@ -20,10 +20,10 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->wd = TESTING_DIR;
-
         $this->fs = new Filesystem();
-        $this->fs->mkdir($this->wd);
+        $this->fs->mkdir(TESTING_DIR);
+
+        $this->wd = TESTING_DIR;
     }
 
     public function tearDown()
