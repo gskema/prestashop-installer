@@ -79,6 +79,22 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Returns input stream for manipulation
+     *
+     * @param $input
+     *
+     * @return resource
+     */
+    protected function getInputStream($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fputs($stream, $input);
+        rewind($stream);
+
+        return $stream;
+    }
+
+    /**
      * Tests if command correctly resolves directory, downloads and extracts
      * PrestaShop 1.6
      *
@@ -176,6 +192,67 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
             'folder'    => $folderArgument,
             '--release' => '1.6.1.4',
         ]);
+    }
+
+    /**
+     * Tests if command pops a question whether to continue installation to
+     * non-empty folder. After giving 'n' as answer, check that
+     * folder contents are unmodified.
+     */
+    public function testItAskQuestionWhenOutputDirectoryNotEmpty()
+    {
+        $wd = TESTING_DIR;
+        $folder = 'ps1';
+        $outputDirectory = $wd.'/'.$folder;
+
+        $this->fs->mkdir($outputDirectory);
+        $this->fs->touch($outputDirectory.'/test.txt');
+        file_put_contents($outputDirectory.'/index.php', 'test');
+
+        $client = $this->getMockClient([
+            'https://api.prestashop.com/xml/channel.xml'
+            => TESTS_DIR.'/assets/xml/channel.xml',
+
+            'http://www.prestashop.com/download/releases/prestashop_1.6.1.4.zip'
+            => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
+        ]);
+
+        $app = new Application('PrestaShop Installer', 'x.x.x');
+        $newCommand = new NewCommand($client, null, $wd);
+        $app->add($newCommand);
+
+        $helper = $newCommand->getHelper('question');
+        $helper->setInputStream($this->getInputStream('n\\n'));
+
+        $commandTester = new CommandTester($newCommand);
+        $commandTester->execute([
+            'folder'    => $folder,
+            '--release' => '1.6.1.4',
+        ]);
+
+        $output = $commandTester ? $commandTester->getDisplay() : '';
+
+        // Asks question?
+        $this->assertRegExp('/\[y\/n\]\?/i', $output);
+
+        // Informs which directory is not empty?
+        $this->assertTrue(strpos($output, $outputDirectory) !== false);
+
+        // Has contextual question?
+        $this->assertRegExp('/(not empty|contains)/i', $output);
+        $this->assertRegExp('/(would you|do you|anyway)/i', $output);
+        // $this->assertRegExp('/overwrite/i', $output);
+
+        // Stub files remained?
+        $this->assertTrue($this->fs->exists($outputDirectory));
+        $this->assertTrue($this->fs->exists($outputDirectory.'/test.txt'));
+        $this->assertTrue($this->fs->exists($outputDirectory.'/index.php'));
+
+        // File contents unmodified?
+        $this->assertTrue(file_get_contents($outputDirectory.'/index.php') == 'test');
+
+        // No new files exist?
+        $this->assertTrue(count(scandir($outputDirectory)) === 4);
     }
 
     /**
