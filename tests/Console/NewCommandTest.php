@@ -3,6 +3,7 @@
 namespace Gskema\Test;
 
 use Gskema\PrestaShop\Installer\Console\NewCommand;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -101,7 +102,9 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
                 => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
         ]);
 
+        $app = new Application('PrestaShop Installer', 'x.x.x');
         $newCommand = new NewCommand($client, null, $wd);
+        $app->add($newCommand);
 
         $commandTester = new CommandTester($newCommand);
         $commandTester->execute([
@@ -162,7 +165,9 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
             => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
         ]);
 
+        $app = new Application('PrestaShop Installer', 'x.x.x');
         $newCommand = new NewCommand($client, null, $wd);
+        $app->add($newCommand);
 
         $this->setExpectedException('InvalidArgumentException');
 
