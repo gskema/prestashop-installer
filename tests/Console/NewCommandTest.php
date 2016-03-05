@@ -211,9 +211,9 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
     public function providerInvalidFolderArgument()
     {
         $invalidFolderArguments = array(
-            '/', '//', '///', '/ps1', '/dir/ps1', '//ps1', '///ps1', '..', '../', '../ps1', '../ps1/', '../..',
-            '../../', '../../ps2', '../../ps2/', '/..', '/../', '/../..', '/../../', 'test/..', 'dir0/../',
-            'dir0/../dir1/',
+            '/', '//', '///', '\\', '\\ps1', '\\\\ps2', 'test\\', 'test\\test','/ps1', '/dir/ps1', '//ps1', '///ps1',
+            '..', '../', '../ps1', '../ps1/', '../..', '../../', '../../ps2', '../../ps2/', '/..', '/../', '/../..',
+            '/../../', 'test/..', 'dir0/../', 'dir0/../dir1/',
         );
 
         return array_map(function ($invalidFolderArgument) {

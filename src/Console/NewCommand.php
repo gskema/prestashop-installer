@@ -83,7 +83,7 @@ class NewCommand extends Command
         $folder = $input->getArgument('folder');
 
         // Disallow absolute paths (for now) and going down ../ directories
-        if (strpos($folder, '/') === 0 || strpos($folder, '..') !== false) {
+        if (strpos($folder, '/') === 0 || strpos($folder, '..') !== false || strpos($folder, '\\') !== false) {
             throw new InvalidArgumentException('Invalid folder argument');
         }
 
