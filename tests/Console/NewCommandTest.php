@@ -82,7 +82,17 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         return $client;
     }
 
-    public function testItDownloadsPrestaShop1614ToFolder()
+    /**
+     * Tests if command correctly resolves directory, downloads and extracts
+     * PrestaShop 1.6
+     *
+     * @dataProvider providerFolderArgument
+     *
+     * @param string $wd
+     * @param string $folderArgument
+     * @param string $expectedOutputDirectory
+     */
+    public function testItDownloadsAndExtractsPS16ToFolder($wd, $folderArgument, $expectedOutputDirectory)
     {
         $client = $this->getMockClient([
             'https://api.prestashop.com/xml/channel.xml'
@@ -92,14 +102,11 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
                 => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
         ]);
 
-        $outputFolder = 'ps1';
-        $outputDirectory = $this->wd.'/'.$outputFolder;
-
-        $newCommand = new NewCommand($client, null, $this->wd);
+        $newCommand = new NewCommand($client, null, $wd);
 
         $commandTester = new CommandTester($newCommand);
         $commandTester->execute([
-            'folder'    => $outputFolder,
+            'folder'    => $folderArgument,
             '--release' => '1.6.1.4',
         ]);
 
@@ -123,14 +130,43 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
 
         $allFilesExists = true;
         foreach ($ps1614files as $file) {
-            if (!$this->fs->exists($outputDirectory.'/'.$file)) {
-                echo PHP_EOL.'PrestaShop file not found: ['.$outputDirectory.'/'.$file.']'.PHP_EOL;
+            if (!$this->fs->exists($expectedOutputDirectory.'/'.$file)) {
+                echo PHP_EOL.'PrestaShop file not found: ['.$expectedOutputDirectory.'/'.$file.']'.PHP_EOL;
                 $allFilesExists = false;
                 break;
             }
         }
 
         $this->assertTrue($allFilesExists);
+    }
+
+    /**
+     * Provides different starting directories, folder arguments and expected
+     * output directories that should work
+     *
+     * @return array
+     */
+    public function providerFolderArgument()
+    {
+        return [
+            [$this->wd, '',   $this->wd],
+            [$this->wd, '.',  $this->wd],
+            [$this->wd, './', $this->wd],
+
+            [$this->wd, 'ps1',   $this->wd.'/ps1'],
+            [$this->wd, './ps1', $this->wd.'/ps1'],
+
+            [$this->wd, 'up1/ps2',   $this->wd.'/up1/ps2'],
+            [$this->wd, './up1/ps2', $this->wd.'/up1/ps2'],
+
+            [$this->wd.'/up1/up2/up3', '.',            $this->wd.'/up1/up2/up3'],
+            [$this->wd.'/up1/up2/up3', './',           $this->wd.'/up1/up2/up3'],
+            [$this->wd.'/up1/up2/up3', '../',          $this->wd.'/up1/up2'],
+            [$this->wd.'/up1/up2/up3', '../../',       $this->wd.'/up1/'],
+            [$this->wd.'/up1/up2/up3', '../ps3',       $this->wd.'/up1/up2/ps3'],
+            [$this->wd.'/up1/up2/up3', '../../ps2',    $this->wd.'/up1/ps2'],
+            [$this->wd.'/up1/up2/up3', '../../../ps1', $this->wd.'/ps1'],
+        ];
     }
 
     /**
