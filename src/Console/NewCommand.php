@@ -5,6 +5,7 @@ namespace Gskema\PrestaShop\Installer\Console;
 use ZipArchive;
 use RuntimeException;
 use GuzzleHttp\Client;
+use InvalidArgumentException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -80,6 +81,12 @@ class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $folder = $input->getArgument('folder');
+
+        // Disallow absolute paths (for now) and going down ../ directories
+        if (strpos($folder, '/') === 0 || strpos($folder, '..') !== false) {
+            throw new InvalidArgumentException('Invalid folder argument');
+        }
+
         $directory = $this->wd.'/'.$folder;
 
         $isFolderEmpty = $this->verifyApplicationDoesNotExist($directory);
