@@ -255,6 +255,16 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(count(scandir($outputDirectory)) === 4);
     }
 
+    public function testItDoesNotOverwriteNonConflictingOutputDirectoryFiles()
+    {
+        // @TODO
+    }
+
+    public function testItOverwritesConflictingOutputDirectoryFiles()
+    {
+        // @TODO
+    }
+
     /**
      * Provides different starting directories, folder arguments and expected
      * output directories that should work
