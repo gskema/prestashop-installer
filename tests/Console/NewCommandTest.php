@@ -140,6 +140,40 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests if command disallows invalid directory names:
+     * wrong characters or symbolic links that need to be expanded (. is allowed)
+     *
+     * @param string $wd
+     * @param string $folderArgument
+     *
+     * @dataProvider providerInvalidFolderArgument
+     */
+    public function testItThrowsExceptionWhenFolderArgumentInvalid($wd, $folderArgument)
+    {
+        // If you call command from console, you already are in some working directory (wd, cwd)
+        // We need to create it when we test
+        $this->fs->mkdir($wd);
+
+        $client = $this->getMockClient([
+            'https://api.prestashop.com/xml/channel.xml'
+            => TESTS_DIR.'/assets/xml/channel.xml',
+
+            'http://www.prestashop.com/download/releases/prestashop_1.6.1.4.zip'
+            => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
+        ]);
+
+        $newCommand = new NewCommand($client, null, $wd);
+
+        $this->setExpectedException('InvalidArgumentException');
+
+        $commandTester = new CommandTester($newCommand);
+        $commandTester->execute([
+            'folder'    => $folderArgument,
+            '--release' => '1.6.1.4',
+        ]);
+    }
+
+    /**
      * Provides different starting directories, folder arguments and expected
      * output directories that should work
      *
@@ -167,6 +201,24 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
             [$wd.'/up1/up2/up3', 'ps4',   $wd.'/up1/up2/up3/ps4'],
             [$wd.'/up1/up2/up3', './ps4', $wd.'/up1/up2/up3/ps4'],
         ];
+    }
+
+    /**
+     * Provides invalid folder arguments
+     *
+     * @return array
+     */
+    public function providerInvalidFolderArgument()
+    {
+        $invalidFolderArguments = array(
+            '/', '//', '///', '/ps1', '/dir/ps1', '//ps1', '///ps1', '..', '../', '../ps1', '../ps1/', '../..',
+            '../../', '../../ps2', '../../ps2/', '/..', '/../', '/../..', '/../../', 'test/..', 'dir0/../',
+            'dir0/../dir1/',
+        );
+
+        return array_map(function ($invalidFolderArgument) {
+            return [TESTING_DIR, $invalidFolderArgument];
+        }, $invalidFolderArguments);
     }
 
     /**
