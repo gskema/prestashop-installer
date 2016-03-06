@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/gskema/prestashop-installer.svg?branch=master)](https://travis-ci.org/gskema/prestashop-installer)
 [![Join the chat at https://gitter.im/gskema/prestashop-installer](https://badges.gitter.im/gskema/prestashop-installer.svg)](https://gitter.im/gskema/prestashop-installer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Packagist](https://img.shields.io/packagist/dt/gskema/prestashop-installer.svg)]()
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ee3bfe8e-e580-4478-a2bb-b0e5cd401f47/mini.png)](https://insight.sensiolabs.com/projects/ee3bfe8e-e580-4478-a2bb-b0e5cd401f47)
 [![GitHub release](https://img.shields.io/github/release/gskema/prestashop-installer.svg)]()
 
 A CLI tool which downloads and extracts PrestaShop to a specified directory.
