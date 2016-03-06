@@ -146,16 +146,13 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
             'upload', 'webservice'
         ];
 
-        $allFilesExists = true;
         foreach ($ps1614files as $file) {
-            if (!$this->fs->exists($expectedOutputDirectory.'/'.$file)) {
+            $fileExists = $this->fs->exists($expectedOutputDirectory.'/'.$file);
+            $this->assertTrue($fileExists);
+            if (!$fileExists) {
                 echo PHP_EOL.'PrestaShop file not found: ['.$expectedOutputDirectory.'/'.$file.']'.PHP_EOL;
-                $allFilesExists = false;
-                break;
             }
         }
-
-        $this->assertTrue($allFilesExists);
     }
 
     /**
