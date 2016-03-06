@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 (2016-03-06)
+- Added tests
+- Refactored code to make it testable
+- Absolute paths, `\` symbol and `..` symbols are now forbidden in folder argument
+
 ## 2.0.2 (2015-12-29)
 - Updated documentation
 
