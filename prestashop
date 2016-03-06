@@ -7,6 +7,6 @@ if (file_exists(__DIR__.'/../../autoload.php')) {
     require(__DIR__.'/vendor/autoload.php');
 }
 
-$app = new Symfony\Component\Console\Application('PrestaShop Installer', '2.0.2');
+$app = new Symfony\Component\Console\Application('PrestaShop Installer', '2.1.0');
 $app->add(new Gskema\PrestaShop\Installer\Console\NewCommand());
 $app->run();
