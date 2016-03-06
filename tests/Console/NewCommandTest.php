@@ -207,7 +207,7 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
 
         $this->fs->mkdir($outputDirectory);
         $this->fs->touch($outputDirectory.'/test.txt');
-        file_put_contents($outputDirectory.'/index.php', 'test');
+        $this->fs->dumpFile($outputDirectory.'/index.php', 'test');
 
         $client = $this->getMockClient([
             'https://api.prestashop.com/xml/channel.xml'
