@@ -255,14 +255,93 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(count(scandir($outputDirectory)) === 4);
     }
 
-    public function testItDoesNotOverwriteNonConflictingOutputDirectoryFiles()
+    /**
+     * Tests if command correctly overwrite existing files in
+     * directory and does not overwrite other files
+     */
+    public function testItOverwritesFilesInExistingOutputDirectory()
     {
-        // @TODO
-    }
+        $wd = TESTING_DIR;
+        $folder = 'ps1';
+        $outputDirectory = $wd.'/'.$folder;
 
-    public function testItOverwritesConflictingOutputDirectoryFiles()
-    {
-        // @TODO
+        $this->fs->mkdir($outputDirectory);
+
+        // @TODO Test nested files
+        // 0 - should be overwritten, 1 - should be unchanged
+        $outputDirFiles = [
+            'index.php'       => [0, 'test'],
+            'README.md'       => [0, 'test'],
+            'custom_file.txt' => [1, 'test'],
+        ];
+
+        foreach ($outputDirFiles as $filePath => $data) {
+            $this->fs->dumpFile($outputDirectory.'/'.$filePath, $data[1]);
+        }
+        unset($filePath, $data);
+
+        $client = $this->getMockClient([
+            'https://api.prestashop.com/xml/channel.xml'
+            => TESTS_DIR.'/assets/xml/channel.xml',
+
+            'http://www.prestashop.com/download/releases/prestashop_1.6.1.4.zip'
+            => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
+        ]);
+
+        $app = new Application('PrestaShop Installer', 'x.x.x');
+        $newCommand = new NewCommand($client, null, $wd);
+        $app->add($newCommand);
+
+        $helper = $newCommand->getHelper('question');
+        // Answer 'y' yes to overwrite the files
+        $helper->setInputStream($this->getInputStream('y\\n'));
+
+        $commandTester = new CommandTester($newCommand);
+        $commandTester->execute([
+            'folder'    => $folder,
+            '--release' => '1.6.1.4',
+        ]);
+
+        $output = $commandTester ? $commandTester->getDisplay() : '';
+
+        // Has output?
+        $this->assertRegExp('/\w+/', $output);
+
+        // Mentions download version?
+        $this->assertRegExp('/1\.6\.1\.4/', $output);
+
+        // Mentions PrestaShop?
+        $this->assertRegExp('/prestashop/i', $output);
+
+        $ps1614files = [
+            'Adapter', 'admin', 'cache', 'classes', 'config', 'controllers', 'Core', 'css', 'docs', 'download',
+            'error500.html', 'footer.php', 'header.php', 'images.inc.php', 'img', 'index.php', 'init.php', 'install',
+            'js', 'localization', 'log', 'mails', 'modules', 'override', 'pdf', 'themes', 'tools', 'translations',
+            'upload', 'webservice'
+        ];
+
+        foreach ($ps1614files as $file) {
+            $fileExists = $this->fs->exists($outputDirectory.'/'.$file);
+            $this->assertTrue($fileExists);
+            if (!$fileExists) {
+                echo PHP_EOL.'PrestaShop file not found: ['.$outputDirectory.'/'.$file.']'.PHP_EOL;
+            }
+        }
+
+        foreach ($outputDirFiles as $filePath => $data) {
+            $this->assertTrue($this->fs->exists($outputDirectory.'/'.$filePath));
+            $fileContent = file_get_contents($outputDirectory.'/'.$filePath);
+            $testContent = $data[1];
+
+            $shouldBeOverwritten = $data[0] === 0;
+            if ($shouldBeOverwritten) {
+                // File content should be overwritten and thus no equal now
+                $this->assertTrue($fileContent != $testContent);
+            } else {
+                // File should be the same as before
+                $this->assertTrue($fileContent == $testContent);
+            }
+        }
     }
 
     /**
