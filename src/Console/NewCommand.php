@@ -38,9 +38,9 @@ class NewCommand extends Command
      */
     public function __construct(Client $client = null, Filesystem $fs = null, $wd = null)
     {
-        $this->client     = $client === null ? new Client()     : $client;
-        $this->filesystem = $fs     === null ? new Filesystem() : $fs;
-        $this->wd         = $wd     === null ? getcwd()         : $wd;
+        $this->client     = $client === null ? new Client() : $client;
+        $this->filesystem = $fs === null ? new Filesystem() : $fs;
+        $this->wd         = $wd === null ? getcwd() : $wd;
 
         $this->wd = rtrim($this->wd, '/');
 
