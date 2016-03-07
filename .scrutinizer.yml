@@ -1,0 +1,20 @@
+filter:
+    excluded_paths:
+        - 'tests/*'
+checks:
+    php:
+        code_rating: true
+        duplication: true
+        uppercase_constants: true
+        use_self_instead_of_fqcn: true
+        no_goto: true
+        newline_at_end_of_file: true
+        encourage_single_quotes: true
+        avoid_unnecessary_concatenation: true
+tools:
+    external_code_coverage:
+        timeout: 600
+        runs: 4
+    php_code_sniffer:
+        config:
+            standard: "PSR2"
