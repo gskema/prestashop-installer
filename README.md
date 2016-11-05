@@ -19,7 +19,7 @@ To install this tool on your system, run:
 composer global require "gskema/prestashop-installer=~2.0"
 ```
 
-Make sure to place the `~/.composer/vendor/bin` directory in your PATH
+Make sure to place the `~/.composer/vendor/bin` or `~/.config/composer/vendor/bin` directory in your PATH
 so the `prestashop` executable can be located by your system.
 
 **Warning!**
