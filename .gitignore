@@ -2,3 +2,4 @@
 /.idea/
 /tests/sandbox/
 /*.clover
+/composer.lock
