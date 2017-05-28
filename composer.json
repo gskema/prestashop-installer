@@ -17,7 +17,7 @@
     "require": {
         "php": ">=5.4.0",
         "ext-xml": "*",
-        "guzzlehttp/guzzle": "^5.3",
+        "guzzlehttp/guzzle": "^6.2",
         "symfony/console": "^2.8",
         "symfony/filesystem": "^2.8"
     },
