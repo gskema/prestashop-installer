@@ -16,6 +16,7 @@
     },
     "require": {
         "php": ">=5.4.0",
+        "ext-zip": "*",
         "ext-xml": "*",
         "guzzlehttp/guzzle": "~5.0|~6.0",
         "symfony/console": "^2.8",
