@@ -280,6 +280,13 @@ class NewCommand extends Command
      */
     protected function moveFiles($tmpDirectory, $directory)
     {
+        // Since 1.7 PrestaShop files are within another .zip file, so you can unzip while you unzip...
+        $zipFile17 = $tmpDirectory.'/prestashop.zip';
+        if ($this->filesystem->exists($zipFile17)) {
+            $this->extract($zipFile17, $tmpDirectory.'/prestashop');
+            $this->filesystem->remove($zipFile17);
+        }
+
         $this->filesystem->mirror($tmpDirectory.'/prestashop', $directory, null, array('override' => true));
 
         return $this;
