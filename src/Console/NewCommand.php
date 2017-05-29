@@ -2,6 +2,7 @@
 
 namespace Gskema\PrestaShop\Installer\Console;
 
+use Symfony\Component\Console\Helper\ProgressBar;
 use ZipArchive;
 use RuntimeException;
 use GuzzleHttp\Client;
@@ -100,7 +101,7 @@ class NewCommand extends Command
         $zipFile = $this->makeFilename();
         $tmpFolder = $this->makeFolderName();
 
-        $this->download($zipFile, $downloadUrl);
+        $this->download($zipFile, $downloadUrl, $output);
 
         $output->writeln('<info>Extracting files to ./'.$folder.'/...</info>');
 
@@ -224,14 +225,32 @@ class NewCommand extends Command
     /**
      * Download the temporary Zip to the given file.
      *
-     * @param string $zipFile
-     * @param string $downloadUrl
+     * @param string          $zipFile
+     * @param string          $downloadUrl
+     * @param OutputInterface $output
      *
      * @return $this
      */
-    protected function download($zipFile, $downloadUrl)
+    protected function download($zipFile, $downloadUrl, OutputInterface $output)
     {
-        $response = $this->client->get($downloadUrl);
+        /** @var ProgressBar|null $bar */
+        $bar = null;
+
+        $response = $this->client->get($downloadUrl, [
+            'progress' => function ($downloadTotal, $downloadedBytes) use (&$bar, $output) {
+                if (null === $bar && $downloadTotal > 0) {
+                    $bar = new ProgressBar($output, $downloadTotal);
+                    $bar->setFormat(' %current%/%max% bytes [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%');
+                    $bar->setRedrawFrequency(1048576); // 1024^2
+                }
+                if (null !== $bar && $downloadedBytes > $bar->getProgress()) {
+                    $bar->setProgress($downloadedBytes);
+                }
+            },
+        ]);
+
+        $bar && $bar->finish();
+        $output->writeln('');
 
         file_put_contents($zipFile, $response->getBody());
 
