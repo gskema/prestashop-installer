@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0 (2016-03-06)
+- Bumped required PHP version to 5.5
+- Bumped guzzlehttp/guzzle to 6.*
+- Fixed PrestaShop 1.7 file extraction
+- Added download progress bar
+
 ## 2.1.1 (2016-03-06)
 - Added SensioLabs Insight report
 
