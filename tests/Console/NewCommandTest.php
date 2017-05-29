@@ -3,13 +3,16 @@
 namespace Gskema\Test;
 
 use Gskema\PrestaShop\Installer\Console\NewCommand;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * Class NewCommandTest
+ * @SuppressWarnings(PHPMD.LongVariable)
+ * @SuppressWarnings(PHPMD.ShortVariable)
  */
 class NewCommandTest extends PHPUnit_Framework_TestCase
 {
@@ -28,51 +31,28 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Returns mocked \GuzzleHttp\Message\Response that
-     * return file contents on ->getBody call
-     *
-     * @param string $filePath
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    public function getMockResponse($filePath)
-    {
-        $body = file_get_contents($filePath);
-
-        $response = $this
-            ->getMockBuilder('\GuzzleHttp\Message\Response')
-            ->setConstructorArgs([200])
-            ->getMock();
-
-        $response->expects($this->any())
-            ->method('getBody')
-            ->will($this->returnValue($body));
-
-        return $response;
-    }
-
-    /**
      * Returns mocked Client which returns mocked
      * responses. Response content is mapped from URL to local file.
      *
      * @param array $urlFileMap
      *
-     * @return \PHPUnit_Framework_MockObject_Builder_InvocationMocker
+     * @return Client|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockClient(array $urlFileMap)
+    public function createClient(array $urlFileMap)
     {
         $client = $this
-            ->getMockBuilder('\GuzzleHttp\Client')
+            ->getMockBuilder(Client::class)
+            ->setMethods(['get'])
             ->getMock();
 
-        $client->expects($this->any())
+        $client
+            ->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($url, $options) use ($urlFileMap) {
-                if (array_key_exists($url, $urlFileMap)) {
-                    return $this->getMockResponse($urlFileMap[$url]);
-                } else {
+            ->will($this->returnCallback(function ($url) use ($urlFileMap) {
+                if (!array_key_exists($url, $urlFileMap)) {
                     throw new \Exception('Unexpected URL parameter!');
                 }
+                return new Response(200, [], file_get_contents($urlFileMap[$url]));
             }));
 
         return $client;
@@ -110,10 +90,9 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         // We need to create it when we test
         $this->fs->mkdir($wd);
 
-        $client = $this->getMockClient([
+        $client = $this->createClient([
             'https://api.prestashop.com/xml/channel.xml'
                 => TESTS_DIR.'/assets/xml/channel.xml',
-
             'http://www.prestashop.com/download/releases/prestashop_1.6.1.4.zip'
                 => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
         ]);
@@ -170,12 +149,12 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         // We need to create it when we test
         $this->fs->mkdir($wd);
 
-        $client = $this->getMockClient([
+        $client = $this->createClient([
             'https://api.prestashop.com/xml/channel.xml'
-            => TESTS_DIR.'/assets/xml/channel.xml',
+                => TESTS_DIR.'/assets/xml/channel.xml',
 
             'http://www.prestashop.com/download/releases/prestashop_1.6.1.4.zip'
-            => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
+                => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
         ]);
 
         $app = new Application('PrestaShop Installer', 'x.x.x');
@@ -206,7 +185,7 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         $this->fs->touch($outputDirectory.'/test.txt');
         $this->fs->dumpFile($outputDirectory.'/index.php', 'test');
 
-        $client = $this->getMockClient([
+        $client = $this->createClient([
             'https://api.prestashop.com/xml/channel.xml'
             => TESTS_DIR.'/assets/xml/channel.xml',
 
@@ -277,12 +256,11 @@ class NewCommandTest extends PHPUnit_Framework_TestCase
         }
         unset($filePath, $data);
 
-        $client = $this->getMockClient([
+        $client = $this->createClient([
             'https://api.prestashop.com/xml/channel.xml'
-            => TESTS_DIR.'/assets/xml/channel.xml',
-
+                => TESTS_DIR.'/assets/xml/channel.xml',
             'http://www.prestashop.com/download/releases/prestashop_1.6.1.4.zip'
-            => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
+                => TESTS_DIR.'/assets/zip/prestashop_1.6.1.4.zip',
         ]);
 
         $app = new Application('PrestaShop Installer', 'x.x.x');
