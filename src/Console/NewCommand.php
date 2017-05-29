@@ -108,7 +108,7 @@ class NewCommand extends Command
             $this->setFixture($fixture, $directory);
         }
 
-        $this->cleanUp($zipFile, $tmpFolder);
+        $this->filesystem->remove([$zipFile, $tmpFolder]);
 
         $output->writeln('<comment>PrestaShop is ready to be installed!</comment>');
         $output->writeln('<comment>To proceed with the installation, open the website in your browser or '
@@ -281,22 +281,6 @@ class NewCommand extends Command
     protected function moveFiles($tmpDirectory, $directory)
     {
         $this->filesystem->mirror($tmpDirectory.'/prestashop', $directory, null, array('override' => true));
-
-        return $this;
-    }
-
-    /**
-     * Clean-up the temporary directory and the zip file.
-     *
-     * @param string $zipFile
-     * @param string $tmpDirectory
-     *
-     * @return $this
-     */
-    protected function cleanUp($zipFile, $tmpDirectory)
-    {
-        $this->filesystem->remove($zipFile);
-        $this->filesystem->remove($tmpDirectory);
 
         return $this;
     }
