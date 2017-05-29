@@ -14,10 +14,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-/**
- * Class NewCommand
- * @package PrestaShop\Installer\Console
- */
 class NewCommand extends Command
 {
     /** @var \Symfony\Component\Filesystem\Filesystem */
@@ -29,15 +25,11 @@ class NewCommand extends Command
     /** @var string */
     protected $wd = null;
 
-    /**
-     * NewCommand constructor.
-     *
-     * @param Client|null     $client
-     * @param Filesystem|null $fs
-     * @param string|null     $wd
-     */
-    public function __construct(Client $client = null, Filesystem $fs = null, $wd = null)
-    {
+    public function __construct(
+        Client $client = null,
+        Filesystem $fs = null,
+        $wd = null
+    ) {
         $this->client     = $client === null ? new Client() : $client;
         $this->filesystem = $fs === null ? new Filesystem() : $fs;
         $this->wd         = $wd === null ? getcwd() : $wd;
@@ -48,9 +40,7 @@ class NewCommand extends Command
     }
 
     /**
-     * Configure the command options.
-     *
-     * @return void
+     * @inheritdoc
      */
     protected function configure()
     {
@@ -72,11 +62,7 @@ class NewCommand extends Command
     }
 
     /**
-     * Execute the command.
-     *
-     * @param  InputInterface  $input
-     * @param  OutputInterface  $output
-     * @return void
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -133,6 +119,7 @@ class NewCommand extends Command
      * Returns fixture option
      *
      * @param InputInterface $input
+     *
      * @return string
      */
     protected function getFixtureOption(InputInterface $input)
@@ -149,7 +136,8 @@ class NewCommand extends Command
     /**
      * Verify that the application does not already exist.
      *
-     * @param  string  $directory
+     * @param string $directory
+     *
      * @return bool
      */
     protected function verifyApplicationDoesNotExist($directory)
@@ -187,6 +175,7 @@ class NewCommand extends Command
      * Return PrestaShop download link
      *
      * @param string $version
+     *
      * @return string
      * @throws RuntimeException
      */
@@ -229,8 +218,9 @@ class NewCommand extends Command
     /**
      * Download the temporary Zip to the given file.
      *
-     * @param  string  $zipFile
-     * @param  string  $downloadUrl
+     * @param string $zipFile
+     * @param string $downloadUrl
+     *
      * @return $this
      */
     protected function download($zipFile, $downloadUrl)
@@ -245,8 +235,9 @@ class NewCommand extends Command
     /**
      * Extract the zip file into the given directory.
      *
-     * @param  string  $zipFile
-     * @param  string  $directory
+     * @param string $zipFile
+     * @param string $directory
+     *
      * @return $this
      */
     protected function extract($zipFile, $directory)
@@ -265,6 +256,7 @@ class NewCommand extends Command
      *
      * @param string $fixture
      * @param string $directory
+     *
      * @return $this
      */
     protected function setFixture($fixture, $directory)
@@ -281,8 +273,9 @@ class NewCommand extends Command
     /**
      * Move extracted PrestaShop files to destination directory
      *
-     * @param  string  $tmpDirectory
-     * @param  string  $directory
+     * @param string $tmpDirectory
+     * @param string $directory
+     *
      * @return $this
      */
     protected function moveFiles($tmpDirectory, $directory)
@@ -295,8 +288,9 @@ class NewCommand extends Command
     /**
      * Clean-up the temporary directory and the zip file.
      *
-     * @param  string  $zipFile
-     * @param  string  $tmpDirectory
+     * @param string $zipFile
+     * @param string $tmpDirectory
+     *
      * @return $this
      */
     protected function cleanUp($zipFile, $tmpDirectory)
