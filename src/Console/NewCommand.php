@@ -19,7 +19,7 @@ class NewCommand extends Command
     /** @var Filesystem */
     protected $filesystem = null;
 
-    /** @var \GuzzleHttp\Client */
+    /** @var Client */
     protected $client = null;
 
     /** @var string */
@@ -44,7 +44,8 @@ class NewCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('new')
+        $this
+            ->setName('new')
             ->setDescription('Create a new PrestaShop application.')
             ->addArgument('folder', InputArgument::OPTIONAL)
             ->addOption(
@@ -69,7 +70,10 @@ class NewCommand extends Command
         $folder = $input->getArgument('folder');
 
         // Disallow absolute paths (for now) and going down ../ directories
-        if (strpos($folder, '/') === 0 || strpos($folder, '..') !== false || strpos($folder, '\\') !== false) {
+        if (0 === strpos($folder, '/')
+            || false !== strpos($folder, '..')
+            || false !== strpos($folder, '\\')
+        ) {
             throw new InvalidArgumentException('Invalid folder argument');
         }
 
@@ -111,8 +115,10 @@ class NewCommand extends Command
         $this->filesystem->remove([$zipFile, $tmpFolder]);
 
         $output->writeln('<comment>PrestaShop is ready to be installed!</comment>');
-        $output->writeln('<comment>To proceed with the installation, open the website in your browser or '
-            .'run CLI installer script: php ./'.$folder.'/install/index_cli.php</comment>');
+        $output->writeln(
+            '<comment>To proceed with the installation, open the website in your browser or '
+            .'run CLI installer script: php ./'.$folder.'/install/index_cli.php</comment>'
+        );
     }
 
     /**
