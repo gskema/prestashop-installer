@@ -16,25 +16,25 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class NewCommand extends Command
 {
-    /** @var \Symfony\Component\Filesystem\Filesystem */
+    /** @var Filesystem */
     protected $filesystem = null;
 
     /** @var \GuzzleHttp\Client */
     protected $client = null;
 
     /** @var string */
-    protected $wd = null;
+    protected $workingDir = null;
 
     public function __construct(
-        Client $client = null,
-        Filesystem $fs = null,
-        $wd = null
+        Client     $client = null,
+        Filesystem $filesystem = null,
+        $workingDir = null
     ) {
-        $this->client     = $client === null ? new Client() : $client;
-        $this->filesystem = $fs === null ? new Filesystem() : $fs;
-        $this->wd         = $wd === null ? getcwd() : $wd;
+        $this->client     = $client === null     ? new Client()     : $client;
+        $this->filesystem = $filesystem === null ? new Filesystem() : $filesystem;
+        $this->workingDir = $workingDir === null ? getcwd()         : $workingDir;
 
-        $this->wd = rtrim($this->wd, '/');
+        $this->workingDir = rtrim($this->workingDir, '/');
 
         parent::__construct();
     }
@@ -73,7 +73,7 @@ class NewCommand extends Command
             throw new InvalidArgumentException('Invalid folder argument');
         }
 
-        $directory = $this->wd.'/'.$folder;
+        $directory = $this->workingDir.'/'.$folder;
 
         $isFolderEmpty = $this->verifyApplicationDoesNotExist($directory);
         if (!$isFolderEmpty) {
@@ -158,7 +158,7 @@ class NewCommand extends Command
      */
     protected function makeFilename()
     {
-        return $this->wd.'/prestashop_'.md5(time().uniqid()).'.zip';
+        return $this->workingDir.'/prestashop_'.md5(time().uniqid()).'.zip';
     }
 
     /**
@@ -168,7 +168,7 @@ class NewCommand extends Command
      */
     protected function makeFolderName()
     {
-        return $this->wd.'/prestashop_'.md5(time().uniqid());
+        return $this->workingDir.'/prestashop_'.md5(time().uniqid());
     }
 
     /**
